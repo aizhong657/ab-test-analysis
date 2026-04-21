@@ -1,0 +1,120 @@
+{
+  "dataset": {
+    "events": 2000000,
+    "sessions": 633462,
+    "customers": 100000,
+    "contaminated_sessions": 411260,
+    "contamination_rate_pct": 64.92,
+    "start_date": "2021-01-01",
+    "end_date": "2023-12-31",
+    "traffic_source_case_inconsistencies": {
+      "organic": [
+        [
+          "Organic",
+          776758
+        ],
+        [
+          "ORGANIC",
+          23731
+        ]
+      ],
+      "paid search": [
+        [
+          "Paid Search",
+          387657
+        ],
+        [
+          "PAID SEARCH",
+          12181
+        ]
+      ],
+      "social": [
+        [
+          "Social",
+          291194
+        ],
+        [
+          "SOCIAL",
+          9077
+        ]
+      ],
+      "email": [
+        [
+          "Email",
+          290651
+        ],
+        [
+          "EMAIL",
+          8989
+        ]
+      ],
+      "direct": [
+        [
+          "Direct",
+          193870
+        ],
+        [
+          "DIRECT",
+          5892
+        ]
+      ]
+    }
+  },
+  "groups": {
+    "Control": {
+      "n": 501551,
+      "conversions": 77058,
+      "rate": 0.15363941054847863,
+      "ci95_lower": 0.1526440888594616,
+      "ci95_upper": 0.15464003785846267
+    },
+    "Variant_A": {
+      "n": 73727,
+      "conversions": 9857,
+      "rate": 0.1336959322907483,
+      "ci95_lower": 0.13125843734192352,
+      "ci95_upper": 0.13617159693800915
+    },
+    "Variant_B": {
+      "n": 58184,
+      "conversions": 8624,
+      "rate": 0.1482194417709336,
+      "ci95_lower": 0.1453555614471591,
+      "ci95_upper": 0.15112976996060168
+    }
+  },
+  "tests": {
+    "alpha_family": 0.05,
+    "alpha_adjusted_bonferroni": 0.025,
+    "Variant_A_vs_Control": {
+      "name": "Variant_A",
+      "z_stat": -14.118607823197591,
+      "p_value_two_sided": 2.9169702850533496e-45,
+      "p_value_bonferroni": 5.833940570106699e-45,
+      "alpha_bonferroni": 0.025,
+      "diff_ci95_lower": -0.022595022747535908,
+      "diff_ci95_upper": -0.01729193376792474,
+      "abs_diff_pp": -1.9943478257730325,
+      "rel_lift_pct": -12.980704746610217,
+      "cohens_h": -0.05689057012330412,
+      "observed_power": 1.0,
+      "decision_en": "Reject H0 (significantly different from Control)",
+      "direction_en": "lower than Control"
+    },
+    "Variant_B_vs_Control": {
+      "name": "Variant_B",
+      "z_stat": -3.437075776485507,
+      "p_value_two_sided": 0.0005880310662226983,
+      "p_value_bonferroni": 0.0011760621324453965,
+      "alpha_bonferroni": 0.025,
+      "diff_ci95_lower": -0.008474692270385475,
+      "diff_ci95_upper": -0.0023652452847045756,
+      "abs_diff_pp": -0.5419968777545026,
+      "rel_lift_pct": -3.5277203669268404,
+      "cohens_h": -0.015140977428142688,
+      "observed_power": 0.8879651555983056,
+      "decision_en": "Reject H0 (significantly different from Control)",
+      "direction_en": "lower than Control"
+    }
+  }
+}
