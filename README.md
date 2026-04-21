@@ -98,64 +98,41 @@ Bonferroni 校正 + 置信区间 + 效应量 + 功效
 
 > **重要 · Important**：约 **65%** 的 session 同时被打上了多个 `experiment_group` 标签，
 > 这是一个严重的埋点/分流实现问题。本项目用 **modal 众数法**给每个 session 赋一个最可能的 group，
-> 但这只能减少偏差，无法完全消除——**在下一轮实验前必须先修复埋点**。
-
-### 2. 三组转化率 · Conversion rates
-
-| 指标 Metric | Control | Variant_A | Variant_B |
-|-------------|--------:|----------:|----------:|
-| 样本量 Sessions | **501,551** | **73,727** | **58,184** |
-| 转化数 Conversions | 77,058 | 9,857 | 8,624 |
-| 转化率 Rate | **15.36%** | **13.37%** | **14.82%** |
-| 95% CI | [15.26%, 15.46%] | [13.13%, 13.62%] | [14.54%, 15.11%] |
-
-### 3. 假设检验 · Hypothesis tests
-
-| 对比 Comparison | z | p (two-sided) | p (Bonferroni) | 绝对差 · Abs diff | 相对提升 · Rel lift | 95% CI of diff | 结论 Decision |
-|-----------------|--:|---:|---:|---:|---:|---|:---|
-| **Variant_A vs Control** | -14.119 | 2.92e-45 | 5.83e-45 | **-1.99 pp** | **-12.98%** | [-2.26 pp, -1.73 pp] | **拒绝 H0，方向为负 · Reject H0, negative** |
-| **Variant_B vs Control** | -3.437 | 5.88e-04 | 1.18e-03 | **-0.54 pp** | **-3.53%** | [-0.85 pp, -0.24 pp] | **拒绝 H0，方向为负 · Reject H0, negative** |
-
-> 两个 Variant 的差异 95% CI **均完全位于 0 左侧**，即不仅没有"更好"的证据，
-> 而且有充分证据证明它们**比 Control 更差**。
-
-### 4. 效应量与功效 · Effect size and power
-
-| 指标 | Variant_A vs Ctl | Variant_B vs Ctl |
-|------|------------------:|------------------:|
-| Cohen's h | -0.0569 | -0.0151 |
-| 观测功效 Observed power | **100%** | **89%** |
-
-两次检验的观测功效均 ≤ 100%（样本量远超需要），说明"未检出显著正向提升"不是样本量不足导致。
+> 但这种数据质量问题通常需要向数据工程团队反馈。
 
 ---
 
-## 业务建议 · Business recommendation
+### 2. 统计检验 · Statistical results
 
-### **保留 Control，两个 Variant 均不建议上线 · Keep Control; do NOT launch either Variant**
+| 指标 Metric | Control | Variant_A | Variant_B |
+|-------------|---------|-----------|-----------|
+| 样本量 Sessions (n) | 501,551 | 73,727 | 58,184 |
+| 转化率 Rate (p) | **15.36%** | 13.37% | 14.82% |
+| 绝对差异 vs Control | — | -1.99 pp | -0.54 pp |
+| 相对提升 vs Control | — | -12.98% | -3.53% |
+| p-value (Bonferroni) | — | 5.83e-45 | 1.18e-03 |
+| 显著性 (α=0.025) | — | **显著 (Significant)** | **显著 (Significant)** |
 
-**理由 · Rationale**
+**结论 · Conclusion:**
+- **Variant_A** 和 **Variant_B** 的转化率都**显著低于** Control。
+- **Variant_A** 表现最差，转化率下降了约 13%。
+- 虽然 **Variant_B** 表现略好于 A，但仍比旧版 Control 差。
 
-1. **统计层面 Statistical**
-   - 两次比较的 Bonferroni 校正 p 值均 < 0.01，**显著且方向为负**。
-   - Variant_A 的差异 95% CI 为 [-2.26, -1.73] pp，完全在 0 以下；
-     Variant_B 的为 [-0.85, -0.24] pp，同样完全在 0 以下。
+---
 
-2. **业务层面 Business**
-   - Variant_A 相对下降 **-12.98%**（~-1.99 pp），规模不可忽视。
-   - Variant_B 相对下降 **-3.53%**（~-0.54 pp），影响较小但仍为负向。
-   - 若按 Variant_A 的分流比例（约 12%）直接上线，将损失成千上万笔转化。
+## 业务建议 · Business Recommendations
 
-3. **数据质量层面 Data-quality risks**
-   - **65% 的 session 存在分组污染**：同一 session 的事件被打上了多个 `experiment_group` 标签。
-   - 这类噪声通常会让真实差异被稀释。即便如此，两个 Variant 仍然显著负向——**真实差异可能更大**。
-   - `traffic_source` 大小写不一致（`Organic` vs `ORGANIC` 等）说明摄取层缺少标准化。
+❌ **不建议上线任一新版本 · Do NOT ship either variant.**
 
-4. **下一步 Next steps**
-   - 修复埋点 / 分流实现，保证同一 session 只打一次 `experiment_group` 标签；
-   - 在数据摄取层对 `traffic_source` 等字符串字段统一小写；
-   - 重新进行一次 A/B 测试，并在实验前通过 MDE 反推样本量；
-   - 若团队仍希望测试这两个方案，建议先在小流量（<5%）验证，而不是直接全量推广。
+**理由 · Reasons:**
+1.  **统计层面**：两个变体的 p 值均远小于校正后的显著性水平（0.025），且差异方向均为**负向**。
+2.  **业务层面**：上线 Variant_A 预计会导致转化率下降近 2 个百分点，这将对收入产生重大负面影响。
+3.  **数据风险**：65% 的会话存在分组污染，虽然分析采用了众数法兜底，但底层的分流逻辑可能存在系统性偏差。
+
+**下一步行动 · Next steps:**
+- 检查新页面（Variant A/B）的加载性能与埋点是否正常，排除技术故障导致转化率下降。
+- 与产品经理回顾设计方案，探究为何新版页面表现不如旧版（可能是用户习惯或导航改动）。
+- **立即修复**分流污染问题，确保后续实验的数据纯净。
 
 ---
 
