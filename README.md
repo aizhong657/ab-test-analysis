@@ -220,6 +220,3 @@ jupyter notebook notebook.ipynb
 4. **效应量与功效同样重要 · Don't ignore effect size / power**
    单看 p 值可能让一个微弱效应"看起来很显著"（尤其大样本量时）。Cohen's h 与观测功效一起看才能做出稳健决策。
 
----
-
-*作者 · Author：Marvinpk · 完成时间 · Completed：2026 年 4 月*
